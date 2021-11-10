@@ -9,12 +9,17 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    var credentials:[Credentials] = []
+    var dbHelper = DBHelper()
+    
+    
     //MARK: Properties
     lazy var textFieldStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.addArrangedSubview(LogoImageView)
         stackView.addArrangedSubview(usernameTextField)
         stackView.addArrangedSubview(passwordTextField)
+        stackView.addArrangedSubview(errorLabel)
         stackView.addArrangedSubview(loginAndRegisterButtonStackView)
         stackView.addArrangedSubview(forgotPassWordButton)
         stackView.spacing = 5
@@ -32,6 +37,15 @@ class ViewController: UIViewController {
         stackView.distribution = .fillEqually
         stackView.spacing = 3
         return stackView
+    }()
+    
+    
+    lazy var errorLabel: UILabel = {
+        let label = UILabel()
+        label.text = "This is error label"
+        label.textAlignment = .right
+        label.isHidden = true
+        return label
     }()
     
     lazy var LogoImageView: UIImageView = {
@@ -78,6 +92,7 @@ class ViewController: UIViewController {
         let button = UIButton()
         button.setTitle("Login", for: .normal)
         button.backgroundColor = .blue
+        button.addTarget(self, action: #selector(loginButtonPressed), for: .touchUpInside)
         return button
     }()
     
@@ -91,6 +106,30 @@ class ViewController: UIViewController {
         view.addSubview(textFieldStackView)
         setupview()
         // Do any additional setup after loading the view.
+    }
+    
+    @objc fileprivate func loginButtonPressed(){
+        errorLabel.isHidden = false
+        credentials = dbHelper.read()
+        for c in credentials{
+            if c.username == usernameTextField.text{
+                if c.password == passwordTextField.text{
+                    errorLabel.text = "Approved Login"
+                    errorLabel.textColor = .green
+                    return
+                }else{
+                    errorLabel.text = "Incorrect Password"
+                    errorLabel.textColor = .red
+                    return
+                }
+            }else{
+                errorLabel.text = "username not found"
+                errorLabel.textColor = .red
+            }
+            
+        }
+        
+        
     }
     
     @objc fileprivate func registerButtonPressed(_ sender: UIButton){

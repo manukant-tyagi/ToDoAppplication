@@ -14,6 +14,7 @@ class DBHelper{
     
     init() {
         self.db = createDB()
+        createTable()
     }
     
     func createDB() -> OpaquePointer?{
@@ -36,9 +37,9 @@ class DBHelper{
                {
                    if sqlite3_step(createTableStatement) == SQLITE_DONE
                    {
-                       print("person table created.")
+                       print("credential table created.")
                    } else {
-                       print("person table could not be created.")
+                       print("credential table could not be created.")
                    }
                } else {
                    print("CREATE TABLE statement could not be prepared.")
@@ -71,8 +72,32 @@ class DBHelper{
        }
     
     
-    func insert(){
+    func insert(credential : Credentials) {
         
-    }
+            let credentials = read()
+            for c in credentials
+            {
+                if c.username == credential.username
+                {
+                    return
+                }
+            }
+            let insertStatementString = "INSERT INTO credentials (username, email, password) VALUES (?, ?, ?);"
+            var insertStatement: OpaquePointer? = nil
+            if sqlite3_prepare_v2(db, insertStatementString, -1, &insertStatement, nil) == SQLITE_OK {
+                sqlite3_bind_text(insertStatement, 1, (credential.username as NSString).utf8String, -1, nil)
+                sqlite3_bind_text(insertStatement, 2, (credential.email as NSString).utf8String, -1, nil)
+                sqlite3_bind_text(insertStatement, 3, (credential.password as NSString).utf8String, -1, nil)
+                
+                if sqlite3_step(insertStatement) == SQLITE_DONE {
+                    print("Successfully inserted row.")
+                } else {
+                    print("Could not insert row.")
+                }
+            } else {
+                print("INSERT statement could not be prepared.")
+            }
+            sqlite3_finalize(insertStatement)
+        }
 }
 

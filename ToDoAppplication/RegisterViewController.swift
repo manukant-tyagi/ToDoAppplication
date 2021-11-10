@@ -8,12 +8,14 @@
 import UIKit
 
 class RegisterViewController: UIViewController {
+    var dbHelper = DBHelper()
     
     lazy var stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.addArrangedSubview(userNameTextField)
         stackView.addArrangedSubview(emailTextField)
         stackView.addArrangedSubview(passwordTextField)
+        stackView.addArrangedSubview(errorLabel)
         stackView.addArrangedSubview(signUpButton)
         stackView.axis = .vertical
         stackView.alignment = .center
@@ -36,6 +38,15 @@ class RegisterViewController: UIViewController {
 //        let textField = UITextField()
 //        return textField
 //    }()
+    
+    var errorLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .red
+        label.textAlignment = .right
+        label.text = "This is error label"
+        label.isHidden = true
+        return label
+    }()
     lazy var userNameTextField : UITextField = {
         let textField = UITextField()
         textField.borderStyle = .roundedRect
@@ -62,6 +73,7 @@ class RegisterViewController: UIViewController {
         button.setTitle("Sign Up", for: .normal)
         button.backgroundColor = .blue
         button.layer.cornerRadius = 10
+        button.addTarget(nil, action: #selector(signupButtonPressed), for: .touchUpInside)
         
         return button
     }()
@@ -98,6 +110,33 @@ class RegisterViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
     
+    @objc fileprivate func signupButtonPressed(){
+        errorLabel.isHidden = false
+        if userNameTextField.text == "" {
+            errorLabel.text = "Please enter the username"
+            errorLabel.textColor = .red
+            return
+        }
+        
+        if emailTextField.text == "" {
+            errorLabel.text = "Please enter the email adderess"
+            errorLabel.textColor = .red
+            return
+        }
+        
+        if passwordTextField.text == ""{
+            errorLabel.text = "Please enter the new password"
+            errorLabel.textColor = .red
+            return
+        }
+        if let username = userNameTextField.text, let email = emailTextField.text, let password = passwordTextField.text{
+           let credential = Credentials(username: username, email: email, password: password)
+            dbHelper.insert(credential: credential)
+            errorLabel.textColor = .green
+            errorLabel.text = "Resgister successfully"
+        }
+       
+    }
 
     /*
     // MARK: - Navigation

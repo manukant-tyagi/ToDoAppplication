@@ -10,6 +10,7 @@ extension RegisterViewController{
     
    func setupView(){
     stackView.centerInSuperview()
+    errorLabel.width(UIScreen.main.bounds.width - 40)
     emailTextField.size(CGSize(width: UIScreen.main.bounds.width - 40, height: 40))
     passwordTextField.size(CGSize(width: UIScreen.main.bounds.width - 40, height: 40))
     userNameTextField.size(CGSize(width: UIScreen.main.bounds.width - 40, height: 40))
