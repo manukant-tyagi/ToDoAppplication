@@ -77,6 +77,7 @@ class ViewController: UIViewController {
         button.setTitle("forgot Password?", for: .normal)
         button.setTitleColor(.systemBlue, for: .normal)
         button.backgroundColor = .clear
+        button.addTarget(self, action: #selector(forgotButtonPressed), for: .touchUpInside)
         return button
     }()
     
@@ -106,6 +107,18 @@ class ViewController: UIViewController {
         view.addSubview(textFieldStackView)
         setupview()
         // Do any additional setup after loading the view.
+    }
+
+    @objc fileprivate func forgotButtonPressed(){
+        print(dbHelper.read())
+        if let username = usernameTextField.text, let password = passwordTextField.text{
+            dbHelper.update(username: username, password: password)
+            errorLabel.text = "Updated password"
+            errorLabel.textColor = .green
+            print(dbHelper.read())
+        }
+        
+        
     }
     
     @objc fileprivate func loginButtonPressed(){
