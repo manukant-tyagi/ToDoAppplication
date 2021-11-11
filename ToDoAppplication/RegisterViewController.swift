@@ -130,8 +130,7 @@ class RegisterViewController: UIViewController {
             return
         }
         if let username = userNameTextField.text, let email = emailTextField.text, let password = passwordTextField.text{
-           let credential = Credentials(username: username, email: email, password: password)
-            dbHelper.insert(credential: credential)
+            dbHelper.insert(username: username, email: email, password: password)
             errorLabel.textColor = .green
             errorLabel.text = "Resgister successfully"
         }

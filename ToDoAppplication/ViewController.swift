@@ -123,24 +123,36 @@ class ViewController: UIViewController {
     
     @objc fileprivate func loginButtonPressed(){
         errorLabel.isHidden = false
-        credentials = dbHelper.read()
-        for c in credentials{
-            if c.username == usernameTextField.text{
-                if c.password == passwordTextField.text{
-                    errorLabel.text = "Approved Login"
-                    errorLabel.textColor = .green
-                    return
-                }else{
-                    errorLabel.text = "Incorrect Password"
-                    errorLabel.textColor = .red
-                    return
-                }
-            }else{
-                errorLabel.text = "username not found"
-                errorLabel.textColor = .red
-            }
-            
+        guard let username = usernameTextField.text, let password = passwordTextField.text else {return}
+        credentials = dbHelper.read(username: username, password: password)
+        if credentials.count > 0{
+            errorLabel.text = "Approved login"
+            errorLabel.textColor = .green
+            let vc = MainViewController()
+            vc.UserID = credentials[0].userId
+            navigationController?.pushViewController(vc, animated: true)
+        }else {
+            errorLabel.text = "Username and password is invalid"
+            errorLabel.textColor = .red
         }
+        
+//            if c.username == usernameTextField.text{
+//                if c.password == passwordTextField.text{
+//                    errorLabel.text = "Approved Login"
+//                    errorLabel.textColor = .green
+//                    navigationController?.pushViewController(MainViewController(), animated: true)
+//                    return
+//                }else{
+//                    errorLabel.text = "Incorrect Password"
+//                    errorLabel.textColor = .red
+//                    return
+//                }
+//            }else{
+//                errorLabel.text = "username not found"
+//                errorLabel.textColor = .red
+//            }
+//
+//        }
         
         
     }
