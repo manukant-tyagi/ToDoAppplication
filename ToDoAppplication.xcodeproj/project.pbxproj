@@ -18,6 +18,11 @@
 		CD56BAE1273A48170014620E /* RegisterViewController + setupViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD56BAE0273A48170014620E /* RegisterViewController + setupViews.swift */; };
 		CD56BAE3273B729C0014620E /* DBHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD56BAE2273B729C0014620E /* DBHelper.swift */; };
 		CD56BAE5273B75C30014620E /* Credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD56BAE4273B75C30014620E /* Credentials.swift */; };
+		CD56BAE7273CBF0A0014620E /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD56BAE6273CBF0A0014620E /* MainViewController.swift */; };
+		CD56BAE9273CBF530014620E /* MainViewController + setupViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD56BAE8273CBF530014620E /* MainViewController + setupViews.swift */; };
+		CD56BAEB273CC9A00014620E /* Categories.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD56BAEA273CC9A00014620E /* Categories.swift */; };
+		CD56BAED273CCA480014620E /* AddAndEditCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD56BAEC273CCA480014620E /* AddAndEditCategoryViewController.swift */; };
+		CD56BAEF273CCEB40014620E /* AddAndEditCategoriesViewController + setupViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD56BAEE273CCEB40014620E /* AddAndEditCategoriesViewController + setupViews.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +40,11 @@
 		CD56BAE0273A48170014620E /* RegisterViewController + setupViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RegisterViewController + setupViews.swift"; sourceTree = "<group>"; };
 		CD56BAE2273B729C0014620E /* DBHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBHelper.swift; sourceTree = "<group>"; };
 		CD56BAE4273B75C30014620E /* Credentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Credentials.swift; sourceTree = "<group>"; };
+		CD56BAE6273CBF0A0014620E /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		CD56BAE8273CBF530014620E /* MainViewController + setupViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainViewController + setupViews.swift"; sourceTree = "<group>"; };
+		CD56BAEA273CC9A00014620E /* Categories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Categories.swift; sourceTree = "<group>"; };
+		CD56BAEC273CCA480014620E /* AddAndEditCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAndEditCategoryViewController.swift; sourceTree = "<group>"; };
+		CD56BAEE273CCEB40014620E /* AddAndEditCategoriesViewController + setupViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AddAndEditCategoriesViewController + setupViews.swift"; sourceTree = "<group>"; };
 		F6E7B76235CD6A84B1773E5D /* Pods-ToDoAppplication.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ToDoAppplication.debug.xcconfig"; path = "Target Support Files/Pods-ToDoAppplication/Pods-ToDoAppplication.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -91,7 +101,12 @@
 				CD56BAC8273A2F750014620E /* AppDelegate.swift */,
 				CD56BACA273A2F750014620E /* SceneDelegate.swift */,
 				CD56BACC273A2F750014620E /* ViewController.swift */,
+				CD56BAE6273CBF0A0014620E /* MainViewController.swift */,
+				CD56BAEC273CCA480014620E /* AddAndEditCategoryViewController.swift */,
+				CD56BAEE273CCEB40014620E /* AddAndEditCategoriesViewController + setupViews.swift */,
+				CD56BAE8273CBF530014620E /* MainViewController + setupViews.swift */,
 				CD56BAE2273B729C0014620E /* DBHelper.swift */,
+				CD56BAEA273CC9A00014620E /* Categories.swift */,
 				CD56BAE4273B75C30014620E /* Credentials.swift */,
 				CD56BADE273A47D60014620E /* RegisterViewController.swift */,
 				CD56BAE0273A48170014620E /* RegisterViewController + setupViews.swift */,
@@ -220,8 +235,13 @@
 				CD56BADF273A47D60014620E /* RegisterViewController.swift in Sources */,
 				CD56BAE5273B75C30014620E /* Credentials.swift in Sources */,
 				CD56BAC9273A2F750014620E /* AppDelegate.swift in Sources */,
+				CD56BAEF273CCEB40014620E /* AddAndEditCategoriesViewController + setupViews.swift in Sources */,
+				CD56BAED273CCA480014620E /* AddAndEditCategoryViewController.swift in Sources */,
 				CD56BACB273A2F750014620E /* SceneDelegate.swift in Sources */,
 				CD56BAE1273A48170014620E /* RegisterViewController + setupViews.swift in Sources */,
+				CD56BAEB273CC9A00014620E /* Categories.swift in Sources */,
+				CD56BAE9273CBF530014620E /* MainViewController + setupViews.swift in Sources */,
+				CD56BAE7273CBF0A0014620E /* MainViewController.swift in Sources */,
 				CD56BAE3273B729C0014620E /* DBHelper.swift in Sources */,
 				CD56BADD273A36020014620E /* viewController + setupviews.swift in Sources */,
 			);
