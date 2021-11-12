@@ -12,6 +12,9 @@ extension MainViewController{
         addCategoryButton.topToSuperview( offset: 12, usingSafeArea: true)
         addCategoryButton.rightToSuperview( offset: -12, usingSafeArea: true)
         addCategoryButton.height(40)
+        
+        noItemLabel.centerInSuperview()
+        
         tableView.topToBottom(of: addCategoryButton, offset: 10)
         tableView.edgesToSuperview(excluding: .top, insets: TinyEdgeInsets(top: 50, left: 0, bottom: 0, right: 0), usingSafeArea: true)
     }
