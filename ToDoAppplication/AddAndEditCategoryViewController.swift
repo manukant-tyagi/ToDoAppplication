@@ -22,7 +22,7 @@ class AddAndEditCategoryViewController: UIViewController {
         lazy var addAndEditButton: UIButton = {
         let button = UIButton()
             isEditEnable ? button.setTitle("Edit", for: .normal): button.setTitle("Add", for: .normal)
-        button.backgroundColor = .green
+        button.backgroundColor = .systemGreen
         button.layer.cornerRadius = 5
         button.layer.masksToBounds = true
             button.addTarget(self, action: #selector(addAndEditButtonPressed), for: .touchUpInside)
@@ -51,9 +51,13 @@ class AddAndEditCategoryViewController: UIViewController {
     
     @objc fileprivate func addAndEditButtonPressed(){
         if let text = categoryTextField.text{
-            completionHandler?(text)
-            navigationController?.popViewController(animated: false)
+            if text != "" {
+                completionHandler?(text)
+            }
+            
+            
         }
+        navigationController?.popViewController(animated: false)
         
     }
     
