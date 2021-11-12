@@ -23,6 +23,14 @@ class MainViewController: UIViewController, categoryTableViewCellDelegate {
         return table
     }()
     
+    
+    lazy var noItemLabel: UILabel = {
+        let label = UILabel()
+        label.isHidden = true
+        label.text = "No category found"
+        return label
+    }()
+    
     lazy var addCategoryButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .systemGreen
@@ -34,6 +42,8 @@ class MainViewController: UIViewController, categoryTableViewCellDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+//        navigationController?.title = "Category"
+        navigationItem.title = "Category"
         if let userId = UserID{
             categories = dbHelper.readCategoryTable(userID: userId)
         }
@@ -44,6 +54,7 @@ class MainViewController: UIViewController, categoryTableViewCellDelegate {
         view.backgroundColor = .white
         view.addSubview(addCategoryButton)
         view.addSubview(tableView)
+        view.addSubview(noItemLabel)
         setupView()
         // Do any additional setup after loading the view.
     }
@@ -53,9 +64,16 @@ class MainViewController: UIViewController, categoryTableViewCellDelegate {
         let vc = AddAndEditCategoryViewController()
         vc.completionHandler = { (text) in
             guard let userId = self.UserID else {return}
-            self.dbHelper.insertCategory(userID: userId, categoryName: text)
-            self.categories = self.dbHelper.readCategoryTable(userID: userId)
-            self.tableView.reloadData()
+            let isInserted = self.dbHelper.insertCategory(userID: userId, categoryName: text)
+            if isInserted{
+                self.categories = self.dbHelper.readCategoryTable(userID: userId)
+                self.tableView.reloadData()
+            }else {
+                let alert = UIAlertController(title: "This Category name is already exist", message: "", preferredStyle: .actionSheet)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+            }
+            
             print(text)
         }
         navigationController?.pushViewController(vc, animated: false)
@@ -71,9 +89,16 @@ class MainViewController: UIViewController, categoryTableViewCellDelegate {
         
         vc.completionHandler = { (newText) in
             guard let userID = self.UserID else {return}
-            self.dbHelper.updateCategory(userId: userID, changeCategory: text, toNewCategory: newText)
-            self.categories = self.dbHelper.readCategoryTable(userID: userID)
-            self.tableView.reloadData()
+            let isInserted = self.dbHelper.updateCategory(userId: userID, changeCategory: text, toNewCategory: newText)
+            
+            if isInserted{
+                self.categories = self.dbHelper.readCategoryTable(userID: userID)
+                self.tableView.reloadData()
+            }else {
+                let alert = UIAlertController(title: "This Category name is already exist", message: "", preferredStyle: .actionSheet)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+            }
         }
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -94,7 +119,16 @@ class MainViewController: UIViewController, categoryTableViewCellDelegate {
 
 extension MainViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        categories.count
+        
+        if categories.count > 0 {
+            tableView.isHidden = false
+            noItemLabel.isHidden = true
+        }else{
+            tableView.isHidden = true
+            noItemLabel.isHidden = false
+            
+        }
+        return categories.count
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
@@ -107,9 +141,19 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     private func deleteCategory(categoryName: String, userID: Int){
-        self.dbHelper.deleteByCategory(userID: userID, categoryName: categoryName)
-        categories = self.dbHelper.readCategoryTable(userID: userID)
-        tableView.reloadData()
+        let alert = UIAlertController(title: categoryName, message: "are you sure? ", preferredStyle: .alert)
+        let alertAction = UIAlertAction(title: "Delete", style: .destructive) { (action) in
+            
+            self.dbHelper.deleteByCategory(userID: userID, categoryName: categoryName)
+            self.categories = self.dbHelper.readCategoryTable(userID: userID)
+            self.tableView.reloadData()
+        
+        }
+        alert.addAction(alertAction)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
+        self.present(alert, animated: true, completion: nil)
+       
     }
 
     
@@ -119,6 +163,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource{
         cell.editImageView.image = #imageLiteral(resourceName: "images")
         cell.editButton.tag = indexPath.row
         cell.delegate = self
+        cell.selectionStyle = .none
         return cell
     }
     

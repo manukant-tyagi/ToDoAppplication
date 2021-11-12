@@ -103,6 +103,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.title = "Login"
         view.backgroundColor = .white
         view.addSubview(textFieldStackView)
         setupview()
