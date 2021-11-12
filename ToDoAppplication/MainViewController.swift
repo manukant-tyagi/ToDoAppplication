@@ -98,18 +98,14 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! categoriesTableViewCell
-        cell.textLabel?.text = categories[indexPath.row].categoryName
+        cell.categogyNameLabel.text = categories[indexPath.row].categoryName
         cell.editImageView.image = #imageLiteral(resourceName: "images")
         cell.delegate = self
         return cell
     }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        <#code#>
-    }
-    
-    
 }
+
+
 
 import TinyConstraints
 class categoriesTableViewCell: UITableViewCell{
@@ -118,6 +114,12 @@ class categoriesTableViewCell: UITableViewCell{
     lazy var editImageView: UIImageView = {
         let view = UIImageView()
         return view
+    }()
+    
+    lazy var categogyNameLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .left
+        return label
     }()
     
     lazy var editButton: UIButton = {
@@ -134,6 +136,7 @@ class categoriesTableViewCell: UITableViewCell{
         isUserInteractionEnabled = true
         addSubview(editImageView)
         addSubview(editButton)
+        addSubview(categogyNameLabel)
         setupViews()
     }
     
@@ -143,7 +146,7 @@ class categoriesTableViewCell: UITableViewCell{
     
     
     @objc fileprivate func editButtonPressed(){
-        delegate?.didTapEditButton(text: textLabel?.text ?? "")
+//        delegate?.didTapEditButton(text: textLabel?.text ?? "")
     }
     
 //    let cell : UITableViewCell = {
@@ -161,6 +164,9 @@ extension categoriesTableViewCell {
         editButton.centerYToSuperview()
         editButton.rightToSuperview(offset: -10, usingSafeArea: true)
         
+        categogyNameLabel.leftToSuperview(offset: 10, usingSafeArea: true)
+        categogyNameLabel.centerYToSuperview()
+        categogyNameLabel.right(to: editButton, offset: 10)
         
         editImageView.size(CGSize(width: 20, height: 20))
         editImageView.rightToSuperview(offset: -10, usingSafeArea: true)
