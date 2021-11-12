@@ -20,6 +20,7 @@ class MainViewController: UIViewController, categoryTableViewCellDelegate {
     
     lazy var tableView : UITableView = {
         let table = UITableView()
+        table.allowsSelection = false
         table.register(categoriesTableViewCell.self, forCellReuseIdentifier: "cell")
         return table
     }()
@@ -67,8 +68,11 @@ class MainViewController: UIViewController, categoryTableViewCellDelegate {
         
         vc.isEditEnable = true
         
-        vc.completionHandler = { (text) in
-            print(text)
+        vc.completionHandler = { (newText) in
+            guard let userID = self.UserID else {return}
+            self.dbHelper.updateCategory(userId: userID, changeCategory: text, toNewCategory: newText)
+            self.categories = self.dbHelper.readCategoryTable(userID: userID)
+            self.tableView.reloadData()
         }
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -96,7 +100,12 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource{
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! categoriesTableViewCell
         cell.textLabel?.text = categories[indexPath.row].categoryName
         cell.editImageView.image = #imageLiteral(resourceName: "images")
+        cell.delegate = self
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        <#code#>
     }
     
     
@@ -113,6 +122,7 @@ class categoriesTableViewCell: UITableViewCell{
     
     lazy var editButton: UIButton = {
         let button = UIButton()
+        button.isUserInteractionEnabled = true
         button.backgroundColor = .red
         button.addTarget(self, action: #selector(editButtonPressed), for: .touchUpInside)
         return button
@@ -121,6 +131,7 @@ class categoriesTableViewCell: UITableViewCell{
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
        super.init(style: style, reuseIdentifier: "cell")
+        isUserInteractionEnabled = true
         addSubview(editImageView)
         addSubview(editButton)
         setupViews()
@@ -149,6 +160,7 @@ extension categoriesTableViewCell {
         editButton.size(CGSize(width: 40, height: superview?.bounds.height ?? 20))
         editButton.centerYToSuperview()
         editButton.rightToSuperview(offset: -10, usingSafeArea: true)
+        
         
         editImageView.size(CGSize(width: 20, height: 20))
         editImageView.rightToSuperview(offset: -10, usingSafeArea: true)

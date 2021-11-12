@@ -159,6 +159,18 @@ class DBHelper{
             sqlite3_finalize(insertStatement)
         }
     
+    func updateCategory(userId: Int, changeCategory categoryName: String,toNewCategory newCategoryName: String){
+        let query = "UPDATE category SET categoryName = '\(newCategoryName) WHERE categoryName = '\(categoryName)' AND userID = '\(userId)';"
+        var statement: OpaquePointer? = nil
+        if sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK{
+            if sqlite3_step(statement) == SQLITE_DONE{
+                print("Data updated success")
+            }else{
+                print("Data is not updated in table")
+            }
+        }
+    }
+    
     
     func update(username: String, password: String) {
             let query = "UPDATE credentials SET password = '\(password)' WHERE username = '\(username)';"

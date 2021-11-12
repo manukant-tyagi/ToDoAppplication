@@ -110,12 +110,10 @@ class ViewController: UIViewController {
     }
 
     @objc fileprivate func forgotButtonPressed(){
-        print(dbHelper.read())
         if let username = usernameTextField.text, let password = passwordTextField.text{
             dbHelper.update(username: username, password: password)
             errorLabel.text = "Updated password"
             errorLabel.textColor = .green
-            print(dbHelper.read())
         }
         
         
