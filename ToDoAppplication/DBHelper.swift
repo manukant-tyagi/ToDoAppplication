@@ -159,6 +159,34 @@ class DBHelper{
             sqlite3_finalize(insertStatement)
         }
     
+    func updateCategory(userId: Int, changeCategory categoryName: String,toNewCategory newCategoryName: String){
+        let query = "UPDATE category SET categoryName = '\(newCategoryName)' WHERE categoryName = '\(categoryName)' AND userID = '\(userId)';"
+        var statement: OpaquePointer? = nil
+        if sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK{
+            if sqlite3_step(statement) == SQLITE_DONE{
+                print("Data updated success")
+            }else{
+                print("Data is not updated in table")
+            }
+        }
+    }
+    
+    func deleteByCategory(userID: Int, categoryName: String) {
+            let deleteStatementStirng = "DELETE FROM category WHERE userID = '\(userID)' AND categoryName = '\(categoryName)';"
+            var deleteStatement: OpaquePointer? = nil
+            if sqlite3_prepare_v2(db, deleteStatementStirng, -1, &deleteStatement, nil) == SQLITE_OK {
+//                sqlite3_bind_int(deleteStatement, 1, Int32(id))
+                if sqlite3_step(deleteStatement) == SQLITE_DONE {
+                    print("Successfully deleted row.")
+                } else {
+                    print("Could not delete row.")
+                }
+            } else {
+                print("DELETE statement could not be prepared")
+            }
+            sqlite3_finalize(deleteStatement)
+        }
+    
     
     func update(username: String, password: String) {
             let query = "UPDATE credentials SET password = '\(password)' WHERE username = '\(username)';"

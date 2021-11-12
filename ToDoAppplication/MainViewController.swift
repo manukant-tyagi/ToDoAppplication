@@ -20,13 +20,13 @@ class MainViewController: UIViewController, categoryTableViewCellDelegate {
     
     lazy var tableView : UITableView = {
         let table = UITableView()
-        table.register(categoriesTableViewCell.self, forCellReuseIdentifier: "cell")
         return table
     }()
     
     lazy var addCategoryButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = .red
+        button.backgroundColor = .systemGreen
+        button.layer.cornerRadius = 10
         button.setTitle("Add Categories", for: .normal)
         button.addTarget(self, action: #selector(addCategoriesButtonPressed), for: .touchUpInside)
         return button
@@ -37,9 +37,10 @@ class MainViewController: UIViewController, categoryTableViewCellDelegate {
         if let userId = UserID{
             categories = dbHelper.readCategoryTable(userID: userId)
         }
-        
+        tableView.register(categoriesTableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.delegate = self
         tableView.dataSource = self
+       
         view.backgroundColor = .white
         view.addSubview(addCategoryButton)
         view.addSubview(tableView)
@@ -64,11 +65,15 @@ class MainViewController: UIViewController, categoryTableViewCellDelegate {
     func didTapEditButton(text: String) {
         let vc = AddAndEditCategoryViewController()
         vc.text = text
+        print(text)
         
         vc.isEditEnable = true
         
-        vc.completionHandler = { (text) in
-            print(text)
+        vc.completionHandler = { (newText) in
+            guard let userID = self.UserID else {return}
+            self.dbHelper.updateCategory(userId: userID, changeCategory: text, toNewCategory: newText)
+            self.categories = self.dbHelper.readCategoryTable(userID: userID)
+            self.tableView.reloadData()
         }
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -92,15 +97,38 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource{
         categories.count
     }
     
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let action = UIContextualAction(style: .destructive, title: "Delete") { (action, view, completionHandler) in
+            guard let userID = self.UserID else {return}
+            self.deleteCategory(categoryName: self.categories[indexPath.row].categoryName, userID: userID )
+            completionHandler(true)
+        }
+        return UISwipeActionsConfiguration(actions: [action])
+    }
+    
+    private func deleteCategory(categoryName: String, userID: Int){
+        self.dbHelper.deleteByCategory(userID: userID, categoryName: categoryName)
+        categories = self.dbHelper.readCategoryTable(userID: userID)
+        tableView.reloadData()
+    }
+
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! categoriesTableViewCell
-        cell.textLabel?.text = categories[indexPath.row].categoryName
+        cell.categoryNameLabel.text = categories[indexPath.row].categoryName
         cell.editImageView.image = #imageLiteral(resourceName: "images")
+        cell.editButton.tag = indexPath.row
+        cell.delegate = self
         return cell
     }
     
     
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        print("Hello")
+//    }
 }
+
+
 
 import TinyConstraints
 class categoriesTableViewCell: UITableViewCell{
@@ -111,9 +139,16 @@ class categoriesTableViewCell: UITableViewCell{
         return view
     }()
     
+    lazy var categoryNameLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .left
+        return label
+    }()
+    
     lazy var editButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = .red
+        button.isUserInteractionEnabled = true
+        button.backgroundColor = .clear
         button.addTarget(self, action: #selector(editButtonPressed), for: .touchUpInside)
         return button
     }()
@@ -121,8 +156,11 @@ class categoriesTableViewCell: UITableViewCell{
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
        super.init(style: style, reuseIdentifier: "cell")
+        isUserInteractionEnabled = true
         addSubview(editImageView)
-        addSubview(editButton)
+//        addSubview(editButton)
+        contentView.addSubview(editButton)
+        addSubview(categoryNameLabel)
         setupViews()
     }
     
@@ -131,8 +169,9 @@ class categoriesTableViewCell: UITableViewCell{
     }
     
     
-    @objc fileprivate func editButtonPressed(){
-        delegate?.didTapEditButton(text: textLabel?.text ?? "")
+    @objc fileprivate func editButtonPressed(sender: UIButton){
+        print("Hello Button")
+        delegate?.didTapEditButton(text: categoryNameLabel.text ?? "")
     }
     
 //    let cell : UITableViewCell = {
@@ -149,6 +188,10 @@ extension categoriesTableViewCell {
         editButton.size(CGSize(width: 40, height: superview?.bounds.height ?? 20))
         editButton.centerYToSuperview()
         editButton.rightToSuperview(offset: -10, usingSafeArea: true)
+        
+        categoryNameLabel.leftToSuperview(offset: 10, usingSafeArea: true)
+        categoryNameLabel.centerYToSuperview()
+        categoryNameLabel.right(to: editButton, offset: 10)
         
         editImageView.size(CGSize(width: 20, height: 20))
         editImageView.rightToSuperview(offset: -10, usingSafeArea: true)
