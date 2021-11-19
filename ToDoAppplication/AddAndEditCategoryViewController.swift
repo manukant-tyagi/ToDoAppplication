@@ -15,8 +15,19 @@ class AddAndEditCategoryViewController: UIViewController {
     lazy var categoryTextField: UITextField = {
         let textField = UITextField()
         textField.text = text
+        textField.placeholder = "Add Category"
+        textField.addTarget(self, action: #selector(didStartEditng), for: .editingChanged)
         textField.borderStyle = .roundedRect
         return textField
+    }()
+    
+    lazy var errorLabel: UILabel = {
+        let label = UILabel()
+        label.text = "This field should not be empty"
+        label.textAlignment = .left
+        label.textColor = .red
+        label.isHidden = true
+        return label
     }()
     
         lazy var addAndEditButton: UIButton = {
@@ -35,6 +46,7 @@ class AddAndEditCategoryViewController: UIViewController {
         view.alignment = .center
             view.spacing = 5
         view.addArrangedSubview(categoryTextField)
+            view.addArrangedSubview(errorLabel)
             view.addArrangedSubview(addAndEditButton)
         return view
     }()
@@ -50,10 +62,18 @@ class AddAndEditCategoryViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
     
+    
+    @objc fileprivate func didStartEditng(){
+        errorLabel.isHidden = true
+    }
+    
     @objc fileprivate func addAndEditButtonPressed(){
         if let text = categoryTextField.text{
             if text != "" {
                 completionHandler?(text)
+            }else {
+                errorLabel.isHidden = false
+                return
             }
             
             

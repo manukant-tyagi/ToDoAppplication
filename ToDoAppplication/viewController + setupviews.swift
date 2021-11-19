@@ -9,9 +9,9 @@ import TinyConstraints
 extension ViewController{
     func setupview()  {
         errorLabel.width(UIScreen.main.bounds.width - 50)
-        usernameTextField.size(CGSize(width: UIScreen.main.bounds.width - 50, height: 50))
+        emailTextField.size(CGSize(width: UIScreen.main.bounds.width - 50, height: 50))
         passwordTextField.size(CGSize(width: UIScreen.main.bounds.width - 50, height: 50))
-        loginAndRegisterButtonStackView.size(CGSize(width: UIScreen.main.bounds.width - 50, height: 40))
+        loginButton.size(CGSize(width: UIScreen.main.bounds.width - 100, height: 50))
         textFieldStackView.centerInSuperview()
         textFieldStackView.leftToSuperview(offset: 20)
         textFieldStackView.rightToSuperview(offset: -20)

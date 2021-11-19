@@ -17,25 +17,16 @@ class ViewController: UIViewController {
     lazy var textFieldStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.addArrangedSubview(LogoImageView)
-        stackView.addArrangedSubview(usernameTextField)
+        stackView.addArrangedSubview(emailTextField)
         stackView.addArrangedSubview(passwordTextField)
         stackView.addArrangedSubview(errorLabel)
-        stackView.addArrangedSubview(loginAndRegisterButtonStackView)
+        stackView.addArrangedSubview(loginButton)
         stackView.addArrangedSubview(forgotPassWordButton)
+        stackView.addArrangedSubview(registerButton)
         stackView.spacing = 5
         stackView.axis = .vertical
         stackView.alignment = .center
         stackView.distribution = .equalSpacing
-        return stackView
-    }()
-    
-    lazy var loginAndRegisterButtonStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.addArrangedSubview(registerButton)
-        stackView.addArrangedSubview(loginButton)
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.spacing = 3
         return stackView
     }()
     
@@ -44,7 +35,7 @@ class ViewController: UIViewController {
         let label = UILabel()
         label.text = "This is error label"
         label.textAlignment = .right
-        label.isHidden = true
+        label.alpha = 0.0
         return label
     }()
     
@@ -57,9 +48,10 @@ class ViewController: UIViewController {
         return view
     }()
     
-    lazy var usernameTextField : UITextField = {
+    lazy var emailTextField : UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Username"
+        textField.addTarget(self, action: #selector(didStartEditing), for: .editingChanged)
+        textField.placeholder = "Email"
         textField.borderStyle = .roundedRect
         return textField
     }()
@@ -67,6 +59,7 @@ class ViewController: UIViewController {
     lazy var passwordTextField : UITextField = {
         let textField = UITextField()
         textField.placeholder = "Password"
+        textField.addTarget(self, action: #selector(didStartEditing), for: .editingChanged)
         textField.borderStyle = .roundedRect
         textField.isSecureTextEntry = true
         return textField
@@ -74,7 +67,8 @@ class ViewController: UIViewController {
     
     lazy var forgotPassWordButton: UIButton = {
         let button = UIButton()
-        button.setTitle("forgot Password?", for: .normal)
+        button.setTitle("Forgot Password?", for: .normal)
+        
         button.setTitleColor(.systemBlue, for: .normal)
         button.backgroundColor = .clear
         button.addTarget(self, action: #selector(forgotButtonPressed), for: .touchUpInside)
@@ -83,8 +77,12 @@ class ViewController: UIViewController {
     
     lazy var registerButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Register", for: .normal)
-        button.backgroundColor = .systemGreen
+        button.setTitle("New? Create an account.", for: .normal)
+        button.setTitleColor(.systemBlue, for: .normal)
+        button.backgroundColor = .clear
+//        button.layer.cornerRadius = 5
+//        button.layer.masksToBounds = true
+//        button.backgroundColor = .systemGreen
         button.addTarget(self, action: #selector(registerButtonPressed), for: .touchUpInside)
         return button
     }()
@@ -92,6 +90,8 @@ class ViewController: UIViewController {
     lazy var loginButton: UIButton = {
         let button = UIButton()
         button.setTitle("Login", for: .normal)
+        button.layer.cornerRadius = 5
+        button.layer.masksToBounds = true
         button.backgroundColor = .blue
         button.addTarget(self, action: #selector(loginButtonPressed), for: .touchUpInside)
         return button
@@ -109,29 +109,51 @@ class ViewController: UIViewController {
         setupview()
         // Do any additional setup after loading the view.
     }
+    
+    @objc fileprivate func didStartEditing(){
+        errorLabel.alpha = 0
+    }
 
     @objc fileprivate func forgotButtonPressed(){
-        if let username = usernameTextField.text, let password = passwordTextField.text{
-            dbHelper.update(username: username, password: password)
-            errorLabel.text = "Updated password"
-            errorLabel.textColor = .green
+        errorLabel.alpha = 1
+        if let email = emailTextField.text, let password = passwordTextField.text{
+
+            if passwordTextField.text == "" {
+                errorLabel.text = "Please enter the new password"
+            }
+            let isUpdated = dbHelper.update(email: email, password: password)
+            if isUpdated {
+                errorLabel.text = "Updated password"
+                errorLabel.textColor = .green
+            }else{
+                errorLabel.text = "invalid email"
+            }
+
         }
         
+//        let vc = popupWindowController()
+//        vc.modalPresentationStyle = .overCurrentContext
+//        self.present(vc, animated: true, completion: nil)
         
     }
     
     @objc fileprivate func loginButtonPressed(){
-        errorLabel.isHidden = false
-        guard let username = usernameTextField.text, let password = passwordTextField.text else {return}
-        credentials = dbHelper.read(username: username, password: password)
+        errorLabel.alpha = 1
+        guard let email = emailTextField.text, let password = passwordTextField.text else {return}
+        credentials = dbHelper.read(email: email)
         if credentials.count > 0{
-            errorLabel.text = "Approved login"
-            errorLabel.textColor = .green
-            let vc = MainViewController()
-            vc.UserID = credentials[0].userId
-            navigationController?.pushViewController(vc, animated: true)
+            if credentials[0].password == password{
+                errorLabel.text = "Approved login"
+                errorLabel.textColor = .green
+                let vc = MainViewController()
+                Universal.credentialID = credentials[0].credentialID
+                navigationController?.pushViewController(vc, animated: true)
+            }else{
+                errorLabel.text = "password is invalid"
+                errorLabel.textColor = .red
+            }
         }else {
-            errorLabel.text = "Username and password is invalid"
+            errorLabel.text = "email is invalid"
             errorLabel.textColor = .red
         }
         
@@ -159,6 +181,94 @@ class ViewController: UIViewController {
     @objc fileprivate func registerButtonPressed(_ sender: UIButton){
         let vc = RegisterViewController()
         navigationController?.pushViewController(vc, animated: true)
+    }
+}
+
+
+class popupWindowController: UIViewController {
+    
+    lazy var textFieldStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.addArrangedSubview(emailTextField)
+        stackView.addArrangedSubview(passwordTextField)
+        stackView.addArrangedSubview(errorLabel)
+        stackView.addArrangedSubview(updateButton)
+        stackView.spacing = 5
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.distribution = .equalSpacing
+        return stackView
+    }()
+    
+    
+    lazy var updateButton:UIButton = {
+        let button = UIButton()
+        button.setTitle("Update", for: .normal)
+        button.layer.cornerRadius = 5
+        button.backgroundColor = .systemGreen
+        button.addTarget(self, action: #selector(updateButtonPressed), for: .touchUpInside)
+        return button
+    }()
+    
+    
+    lazy var errorLabel: UILabel = {
+        let label = UILabel()
+        label.text = "This is error label"
+        label.textAlignment = .right
+        label.alpha = 0.0
+        return label
+    }()
+    
+    lazy var emailTextField : UITextField = {
+        let textField = UITextField()
+        textField.addTarget(self, action: #selector(didStartEditing), for: .editingChanged)
+        textField.placeholder = "Email"
+        textField.borderStyle = .roundedRect
+        return textField
+    }()
+    
+    lazy var passwordTextField : UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "Password"
+        textField.addTarget(self, action: #selector(didStartEditing), for: .editingChanged)
+        textField.borderStyle = .roundedRect
+        textField.isSecureTextEntry = true
+        return textField
+    }()
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .white
+        view.addSubview(textFieldStackView)
+    }
+    
+    @objc fileprivate func updateButtonPressed() {
+        if emailTextField.text == ""{
+            errorLabel.text = "please enter the email"
+            return
+        }
+        if  passwordTextField.text == "" {
+            errorLabel.text = "Please enter the password"
+            return
+        }
+    }
+    
+    @objc fileprivate func didStartEditing(){
+        errorLabel.alpha = 0
+    }
+}
+
+
+
+extension popupWindowController{
+    
+    func setupview()  {
+        textFieldStackView.centerInSuperview()
+        
+        errorLabel.width(UIScreen.main.bounds.width - 100)
+        emailTextField.size(CGSize(width: UIScreen.main.bounds.width - 100, height: 50))
+        passwordTextField.size(CGSize(width: UIScreen.main.bounds.width - 100, height: 50))
     }
 }
 
