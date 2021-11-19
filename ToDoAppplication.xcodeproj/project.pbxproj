@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		A7FC02C4E1346B03584F3354 /* Pods_ToDoAppplication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BF78347CF2679668EB4169C /* Pods_ToDoAppplication.framework */; };
+		CD0486352744BBC50063DD97 /* AddTodoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0486342744BBC50063DD97 /* AddTodoViewController.swift */; };
+		CD0486372744BC070063DD97 /* AddTodoViewController + setupViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0486362744BC070063DD97 /* AddTodoViewController + setupViews.swift */; };
 		CD56BAC9273A2F750014620E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD56BAC8273A2F750014620E /* AppDelegate.swift */; };
 		CD56BACB273A2F750014620E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD56BACA273A2F750014620E /* SceneDelegate.swift */; };
 		CD56BACD273A2F750014620E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD56BACC273A2F750014620E /* ViewController.swift */; };
@@ -23,11 +25,16 @@
 		CD56BAEB273CC9A00014620E /* Categories.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD56BAEA273CC9A00014620E /* Categories.swift */; };
 		CD56BAED273CCA480014620E /* AddAndEditCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD56BAEC273CCA480014620E /* AddAndEditCategoryViewController.swift */; };
 		CD56BAEF273CCEB40014620E /* AddAndEditCategoriesViewController + setupViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD56BAEE273CCEB40014620E /* AddAndEditCategoriesViewController + setupViews.swift */; };
+		CD56BAF3273E97410014620E /* ToDoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD56BAF2273E97410014620E /* ToDoViewController.swift */; };
+		CD56BAF527422C760014620E /* Universal.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD56BAF427422C760014620E /* Universal.swift */; };
+		CD56BAF92743B2A40014620E /* Todo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD56BAF82743B2A40014620E /* Todo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		5BF78347CF2679668EB4169C /* Pods_ToDoAppplication.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ToDoAppplication.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD3AB7E9AC60394CE25DE18D /* Pods-ToDoAppplication.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ToDoAppplication.release.xcconfig"; path = "Target Support Files/Pods-ToDoAppplication/Pods-ToDoAppplication.release.xcconfig"; sourceTree = "<group>"; };
+		CD0486342744BBC50063DD97 /* AddTodoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTodoViewController.swift; sourceTree = "<group>"; };
+		CD0486362744BC070063DD97 /* AddTodoViewController + setupViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AddTodoViewController + setupViews.swift"; sourceTree = "<group>"; };
 		CD56BAC5273A2F750014620E /* ToDoAppplication.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDoAppplication.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD56BAC8273A2F750014620E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CD56BACA273A2F750014620E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -45,6 +52,9 @@
 		CD56BAEA273CC9A00014620E /* Categories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Categories.swift; sourceTree = "<group>"; };
 		CD56BAEC273CCA480014620E /* AddAndEditCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAndEditCategoryViewController.swift; sourceTree = "<group>"; };
 		CD56BAEE273CCEB40014620E /* AddAndEditCategoriesViewController + setupViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AddAndEditCategoriesViewController + setupViews.swift"; sourceTree = "<group>"; };
+		CD56BAF2273E97410014620E /* ToDoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoViewController.swift; sourceTree = "<group>"; };
+		CD56BAF427422C760014620E /* Universal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Universal.swift; sourceTree = "<group>"; };
+		CD56BAF82743B2A40014620E /* Todo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Todo.swift; sourceTree = "<group>"; };
 		F6E7B76235CD6A84B1773E5D /* Pods-ToDoAppplication.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ToDoAppplication.debug.xcconfig"; path = "Target Support Files/Pods-ToDoAppplication/Pods-ToDoAppplication.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -77,6 +87,43 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		CD0486312744BB1B0063DD97 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				CD56BAEA273CC9A00014620E /* Categories.swift */,
+				CD56BAF427422C760014620E /* Universal.swift */,
+				CD56BAE4273B75C30014620E /* Credentials.swift */,
+				CD56BAE2273B729C0014620E /* DBHelper.swift */,
+				CD56BAF82743B2A40014620E /* Todo.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		CD0486322744BB250063DD97 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				CD56BAE8273CBF530014620E /* MainViewController + setupViews.swift */,
+				CD56BAEE273CCEB40014620E /* AddAndEditCategoriesViewController + setupViews.swift */,
+				CD0486362744BC070063DD97 /* AddTodoViewController + setupViews.swift */,
+				CD56BAE0273A48170014620E /* RegisterViewController + setupViews.swift */,
+				CD56BADC273A36020014620E /* viewController + setupviews.swift */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		CD0486332744BB3B0063DD97 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				CD56BACC273A2F750014620E /* ViewController.swift */,
+				CD56BADE273A47D60014620E /* RegisterViewController.swift */,
+				CD56BAF2273E97410014620E /* ToDoViewController.swift */,
+				CD0486342744BBC50063DD97 /* AddTodoViewController.swift */,
+				CD56BAE6273CBF0A0014620E /* MainViewController.swift */,
+				CD56BAEC273CCA480014620E /* AddAndEditCategoryViewController.swift */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
 		CD56BABC273A2F750014620E = {
 			isa = PBXGroup;
 			children = (
@@ -98,19 +145,11 @@
 		CD56BAC7273A2F750014620E /* ToDoAppplication */ = {
 			isa = PBXGroup;
 			children = (
+				CD0486312744BB1B0063DD97 /* Model */,
+				CD0486322744BB250063DD97 /* View */,
+				CD0486332744BB3B0063DD97 /* Controller */,
 				CD56BAC8273A2F750014620E /* AppDelegate.swift */,
 				CD56BACA273A2F750014620E /* SceneDelegate.swift */,
-				CD56BACC273A2F750014620E /* ViewController.swift */,
-				CD56BAE6273CBF0A0014620E /* MainViewController.swift */,
-				CD56BAEC273CCA480014620E /* AddAndEditCategoryViewController.swift */,
-				CD56BAEE273CCEB40014620E /* AddAndEditCategoriesViewController + setupViews.swift */,
-				CD56BAE8273CBF530014620E /* MainViewController + setupViews.swift */,
-				CD56BAE2273B729C0014620E /* DBHelper.swift */,
-				CD56BAEA273CC9A00014620E /* Categories.swift */,
-				CD56BAE4273B75C30014620E /* Credentials.swift */,
-				CD56BADE273A47D60014620E /* RegisterViewController.swift */,
-				CD56BAE0273A48170014620E /* RegisterViewController + setupViews.swift */,
-				CD56BADC273A36020014620E /* viewController + setupviews.swift */,
 				CD56BAD1273A2F760014620E /* Assets.xcassets */,
 				CD56BAD3273A2F760014620E /* LaunchScreen.storyboard */,
 				CD56BAD6273A2F760014620E /* Info.plist */,
@@ -237,11 +276,16 @@
 				CD56BAC9273A2F750014620E /* AppDelegate.swift in Sources */,
 				CD56BAEF273CCEB40014620E /* AddAndEditCategoriesViewController + setupViews.swift in Sources */,
 				CD56BAED273CCA480014620E /* AddAndEditCategoryViewController.swift in Sources */,
+				CD0486352744BBC50063DD97 /* AddTodoViewController.swift in Sources */,
+				CD0486372744BC070063DD97 /* AddTodoViewController + setupViews.swift in Sources */,
+				CD56BAF3273E97410014620E /* ToDoViewController.swift in Sources */,
 				CD56BACB273A2F750014620E /* SceneDelegate.swift in Sources */,
 				CD56BAE1273A48170014620E /* RegisterViewController + setupViews.swift in Sources */,
 				CD56BAEB273CC9A00014620E /* Categories.swift in Sources */,
 				CD56BAE9273CBF530014620E /* MainViewController + setupViews.swift in Sources */,
+				CD56BAF92743B2A40014620E /* Todo.swift in Sources */,
 				CD56BAE7273CBF0A0014620E /* MainViewController.swift in Sources */,
+				CD56BAF527422C760014620E /* Universal.swift in Sources */,
 				CD56BAE3273B729C0014620E /* DBHelper.swift in Sources */,
 				CD56BADD273A36020014620E /* viewController + setupviews.swift in Sources */,
 			);

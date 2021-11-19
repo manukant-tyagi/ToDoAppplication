@@ -15,7 +15,6 @@ class MainViewController: UIViewController, categoryTableViewCellDelegate {
     
     
     var dbHelper = DBHelper()
-    var UserID: Int?
     var categories: [Categories] = []
     
     lazy var tableView : UITableView = {
@@ -44,8 +43,8 @@ class MainViewController: UIViewController, categoryTableViewCellDelegate {
         super.viewDidLoad()
 //        navigationController?.title = "Category"
         navigationItem.title = "Category"
-        if let userId = UserID{
-            categories = dbHelper.readCategoryTable(userID: userId)
+        if let credentialID = Universal.credentialID{
+            categories = dbHelper.readCategoryTable(credentialID: credentialID)
         }
         tableView.register(categoriesTableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.delegate = self
@@ -59,14 +58,17 @@ class MainViewController: UIViewController, categoryTableViewCellDelegate {
         // Do any additional setup after loading the view.
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+    }
+    
     
     @objc fileprivate func addCategoriesButtonPressed(){
         let vc = AddAndEditCategoryViewController()
         vc.completionHandler = { (text) in
-            guard let userId = self.UserID else {return}
-            let isInserted = self.dbHelper.insertCategory(userID: userId, categoryName: text)
+            guard let credentialID = Universal.credentialID else {return}
+            let isInserted = self.dbHelper.insertCategory(credentialID: credentialID, categoryName: text)
             if isInserted{
-                self.categories = self.dbHelper.readCategoryTable(userID: userId)
+                self.categories = self.dbHelper.readCategoryTable(credentialID: credentialID)
                 self.tableView.reloadData()
             }else {
                 let alert = UIAlertController(title: "This Category name is already exist", message: "", preferredStyle: .actionSheet)
@@ -88,11 +90,11 @@ class MainViewController: UIViewController, categoryTableViewCellDelegate {
         vc.isEditEnable = true
         
         vc.completionHandler = { (newText) in
-            guard let userID = self.UserID else {return}
-            let isInserted = self.dbHelper.updateCategory(userId: userID, changeCategory: text, toNewCategory: newText)
+            guard let credentialID = Universal.credentialID else {return}
+            let isInserted = self.dbHelper.updateCategory(credentialID: credentialID, changeCategory: text, toNewCategory: newText)
             
             if isInserted{
-                self.categories = self.dbHelper.readCategoryTable(userID: userID)
+                self.categories = self.dbHelper.readCategoryTable(credentialID: credentialID)
                 self.tableView.reloadData()
             }else {
                 let alert = UIAlertController(title: "This Category name is already exist", message: "", preferredStyle: .actionSheet)
@@ -133,19 +135,19 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let action = UIContextualAction(style: .destructive, title: "Delete") { (action, view, completionHandler) in
-            guard let userID = self.UserID else {return}
-            self.deleteCategory(categoryName: self.categories[indexPath.row].categoryName, userID: userID )
+            guard let credentialID = Universal.credentialID else {return}
+            self.deleteCategory(categoryName: self.categories[indexPath.row].categoryName, credentialID: credentialID )
             completionHandler(true)
         }
         return UISwipeActionsConfiguration(actions: [action])
     }
     
-    private func deleteCategory(categoryName: String, userID: Int){
+    private func deleteCategory(categoryName: String, credentialID: Int){
         let alert = UIAlertController(title: categoryName, message: "are you sure? ", preferredStyle: .alert)
         let alertAction = UIAlertAction(title: "Delete", style: .destructive) { (action) in
             
-            self.dbHelper.deleteByCategory(userID: userID, categoryName: categoryName)
-            self.categories = self.dbHelper.readCategoryTable(userID: userID)
+            self.dbHelper.deleteByCategory(credentialID: credentialID, categoryName: categoryName)
+            self.categories = self.dbHelper.readCategoryTable(credentialID: credentialID)
             self.tableView.reloadData()
         
         }
@@ -168,9 +170,11 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        print("Hello")
-//    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let vc = ToDoViewController()
+        vc.categoryID = categories[indexPath.row].id
+        navigationController?.pushViewController(vc, animated: true)
+    }
 }
 
 

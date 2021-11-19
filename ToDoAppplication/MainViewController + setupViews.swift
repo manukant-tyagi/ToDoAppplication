@@ -11,7 +11,7 @@ extension MainViewController{
     func setupView(){
         addCategoryButton.topToSuperview( offset: 12, usingSafeArea: true)
         addCategoryButton.rightToSuperview( offset: -12, usingSafeArea: true)
-        addCategoryButton.height(40)
+        addCategoryButton.size(CGSize(width: 150, height: 40))
         
         noItemLabel.centerInSuperview()
         

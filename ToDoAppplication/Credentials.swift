@@ -7,14 +7,16 @@
 
 import Foundation
 class Credentials{
-    var userId: Int
-    var username: String
+    var credentialID: Int
+    var firstName: String
+    var lastName: String
     var email: String
     var password: String
-    init(userId: Int, username: String, email: String, password: String) {
-        self.username = username
+    init(credentialID: Int, firstName: String, lastName: String, email: String, password: String) {
+        self.firstName = firstName
+        self.lastName = lastName
         self.email = email
         self.password = password
-        self.userId = userId
+        self.credentialID = credentialID
     }
 }
