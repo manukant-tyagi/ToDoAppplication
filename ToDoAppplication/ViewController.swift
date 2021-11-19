@@ -145,9 +145,15 @@ class ViewController: UIViewController {
             if credentials[0].password == password{
                 errorLabel.text = "Approved login"
                 errorLabel.textColor = .green
-                let vc = MainViewController()
+                
+                UserDefaults.standard.setValue(true, forKey: Constants.loginKey)
+                UserDefaults.standard.setValue(credentials[0].credentialID, forKey: Constants.credentialKey)
+                
+                navigationController?.setViewControllers([MainViewController()], animated: true)
+                
+                
                 Universal.credentialID = credentials[0].credentialID
-                navigationController?.pushViewController(vc, animated: true)
+//                navigationController?.pushViewController(MainViewController(), animated: true)
             }else{
                 errorLabel.text = "password is invalid"
                 errorLabel.textColor = .red

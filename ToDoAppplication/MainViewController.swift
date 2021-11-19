@@ -38,6 +38,8 @@ class MainViewController: UIViewController, categoryTableViewCellDelegate {
         button.addTarget(self, action: #selector(addCategoriesButtonPressed), for: .touchUpInside)
         return button
     }()
+    
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,12 +57,24 @@ class MainViewController: UIViewController, categoryTableViewCellDelegate {
         view.addSubview(tableView)
         view.addSubview(noItemLabel)
         setupView()
+        
+        createLogoutButton()
         // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
     }
     
+    func createLogoutButton(){
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .done, target: self, action: #selector(LogoutButtonPressed))
+    }
+    
+    
+    
+    @objc func LogoutButtonPressed(){
+        UserDefaults.standard.setValue(false, forKey: Constants.loginKey)
+        navigationController?.setViewControllers([ViewController()], animated: false)
+    }
     
     @objc fileprivate func addCategoriesButtonPressed(){
         let vc = AddAndEditCategoryViewController()
