@@ -16,7 +16,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = scene as? UIWindowScene else {return}
         let window = UIWindow(windowScene: windowScene)
         let navigationController = UINavigationController()
-        navigationController.viewControllers = [ViewController()]
+        if UserDefaults.standard.bool(forKey: Constants.loginKey){
+            let vc = MainViewController()
+            Universal.credentialID = UserDefaults.standard.integer(forKey: Constants.credentialKey)
+            navigationController.viewControllers = [vc]
+        }else{
+            navigationController.viewControllers = [ViewController()]
+        }
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
         self.window = window

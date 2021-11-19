@@ -383,3 +383,53 @@ extension DBHelper{
     
 }
 
+extension DBHelper{
+    
+    func createImageTable(){
+    let query = "CREATE TABLE IF NOT EXISTS images(imageID integer Primary key AutoIncrement, todoID Integer, categoryID Integer, credentialID Integer, imageName varchar, createdAt DATETIME, updatedAt DATETIME);"
+        var createTableStatement: OpaquePointer? = nil
+        if sqlite3_prepare_v2(db, query, -1, &createTableStatement, nil) == SQLITE_OK{
+            if sqlite3_step(createTableStatement) == SQLITE_DONE{
+                print("images table created")
+            }else{
+                print("images table could not be created")
+            }
+        }else{
+            print("create table statement could not be prepared")
+        }
+        sqlite3_finalize(createTableStatement)
+    }
+    
+    
+    
+//    func readTodoTable(categoryID: Int, credentialID: Int) -> [Todo]{
+//        let query = "SELECT * FROM todos where categoryID = '\(categoryID)' AND credentialID = '\(credentialID)';"
+//        var queryStatement: OpaquePointer? = nil
+//        var todos : [Todo] = []
+//        if sqlite3_prepare_v2(db, query, -1, &queryStatement, nil) == SQLITE_OK{
+//            while sqlite3_step(queryStatement) == SQLITE_ROW{
+//                let todoID = Int(sqlite3_column_int(queryStatement, 0))
+//                let categoryId = Int(sqlite3_column_int(queryStatement, 1))
+//                let credentialId = Int(sqlite3_column_int(queryStatement, 2))
+//                let todoName = String(describing: String(cString: sqlite3_column_text(queryStatement, 3)))
+//                let isCompleted: Int = Int(sqlite3_column_int(queryStatement, 4))
+//                let dueDate = String(describing: String(cString: sqlite3_column_text(queryStatement, 5)))
+//                todos.append(Todo(todoID: todoID, todoText: todoName, isCompleted: isCompleted, credentialID: credentialId, categoryID: categoryId, dueDate: dueDate))
+//
+//                print(" \(todoID) | \(todoName) | \(credentialId) | \(categoryId)")
+//            }
+//        }else{
+//            print("SELECT statement could not be prepared")
+//        }
+//        sqlite3_finalize(queryStatement)
+//        return todos
+//    }
+    
+//    func readImagesTable(credentialId: Int, categoryId: Int, todoId: Int) -> [Image]{
+//        let query = "SELECT * FROM images where todoID = '\(todoId)' AND categoryID = '\(categoryId)' AND credentialID = '\(credentialId)'"
+//        var readTableStatement: OpaquePointer? = nil
+//        var images : [Image] = []
+//        
+//    }
+}
+
