@@ -17,6 +17,7 @@ class DBHelper{
         createTable()
         createCategoryTable()
         createTodoTable()
+        createImageTable()
     }
     
     func createDB() -> OpaquePointer?{
@@ -259,7 +260,7 @@ extension DBHelper{
     
     func createTodoTable(){
         
-        let query = "CREATE TABLE IF NOT EXISTS todos(todoID Integer Primary Key AutoIncrement, categoryID Integer, credentialID Integer, todoName VARCHAR, isCompleted INTEGER, dueDate String, createdAt DATETIME, updatedAt DATETIME);"
+        let query = "CREATE TABLE IF NOT EXISTS todos(todoID Integer Primary Key AutoIncrement, categoryID Integer, credentialID Integer, todoName VARCHAR, isCompleted INTEGER, dueDate VARCHAR, createdAt DATETIME, updatedAt DATETIME);"
         var createTableStatement: OpaquePointer? = nil
         if sqlite3_prepare(db, query, -1, &createTableStatement, nil) == SQLITE_OK{
             if sqlite3_step(createTableStatement) == SQLITE_DONE{
@@ -313,7 +314,7 @@ extension DBHelper{
                 let dueDate = String(describing: String(cString: sqlite3_column_text(queryStatement, 5)))
                 todos.append(Todo(todoID: todoID, todoText: todoName, isCompleted: isCompleted, credentialID: credentialId, categoryID: categoryId, dueDate: dueDate))
                 
-                print(" \(todoID) | \(todoName) | \(credentialId) | \(categoryId)")
+                print(" \(todoID) | \(todoName) | \(dueDate)  | \(credentialId) | \(categoryId)")
             }
         }else{
             print("SELECT statement could not be prepared")
@@ -342,8 +343,8 @@ extension DBHelper{
             sqlite3_bind_text(insertStatement, 3, (todoName as NSString).utf8String, -1, nil)
             sqlite3_bind_int(insertStatement, 4, Int32(isCompleted))
             sqlite3_bind_text(insertStatement, 5, (dueDate as NSString).utf8String, -1, nil)
-            sqlite3_bind_double(insertStatement, 5, Date().timeIntervalSinceReferenceDate)
-            sqlite3_bind_null(insertStatement, 6)
+            sqlite3_bind_double(insertStatement, 6, Date().timeIntervalSinceReferenceDate)
+            sqlite3_bind_null(insertStatement, 7)
             if sqlite3_step(insertStatement) == SQLITE_DONE{
                 print("successfully inserted row")
             }else{
@@ -357,6 +358,7 @@ extension DBHelper{
         sqlite3_finalize(insertStatement)
         return true
     }
+    
     
     
     
@@ -378,6 +380,26 @@ extension DBHelper{
 //        }
 //        return true
 //    }
+    func uptateTodo(todoId: Int, credetialId: Int, categoryId: Int, todoName: String, isComplete: Int, dueDate: String) -> Bool {
+        let todos = readTodoTable(categoryID: categoryId, credentialID: credetialId)
+        for t in todos{
+            if t.todoID == todoId && t.todoText == todoName{
+             break
+            }else if t.todoText == todoName{
+                return false
+            }
+        }
+        let query = "UPDATE todos SET todoName = '\(todoName)', updatedAt = '\(Date().timeIntervalSinceReferenceDate)', isCompleted = '\(isComplete)', dueDate = '\(dueDate)' where todoId = '\(todoId)';"
+        var updateStatement: OpaquePointer? = nil
+        if sqlite3_prepare_v2(db, query, -1, &updateStatement, nil) == SQLITE_OK {
+            if sqlite3_step(updateStatement) == SQLITE_DONE{
+                print("Data updated success")
+            }else{
+                print("data is not updated in table")
+            }
+        }
+        return true
+    }
     
     
     
@@ -402,34 +424,72 @@ extension DBHelper{
     
     
     
-//    func readTodoTable(categoryID: Int, credentialID: Int) -> [Todo]{
-//        let query = "SELECT * FROM todos where categoryID = '\(categoryID)' AND credentialID = '\(credentialID)';"
-//        var queryStatement: OpaquePointer? = nil
-//        var todos : [Todo] = []
-//        if sqlite3_prepare_v2(db, query, -1, &queryStatement, nil) == SQLITE_OK{
-//            while sqlite3_step(queryStatement) == SQLITE_ROW{
-//                let todoID = Int(sqlite3_column_int(queryStatement, 0))
-//                let categoryId = Int(sqlite3_column_int(queryStatement, 1))
-//                let credentialId = Int(sqlite3_column_int(queryStatement, 2))
-//                let todoName = String(describing: String(cString: sqlite3_column_text(queryStatement, 3)))
-//                let isCompleted: Int = Int(sqlite3_column_int(queryStatement, 4))
-//                let dueDate = String(describing: String(cString: sqlite3_column_text(queryStatement, 5)))
-//                todos.append(Todo(todoID: todoID, todoText: todoName, isCompleted: isCompleted, credentialID: credentialId, categoryID: categoryId, dueDate: dueDate))
-//
-//                print(" \(todoID) | \(todoName) | \(credentialId) | \(categoryId)")
-//            }
-//        }else{
-//            print("SELECT statement could not be prepared")
-//        }
-//        sqlite3_finalize(queryStatement)
-//        return todos
-//    }
+    func readImagesTable(credentialId: Int, categoryId: Int, todoId: Int) -> [Image]{
+        let query = "SELECT * FROM images where todoID = '\(todoId)' AND categoryID = '\(categoryId)' AND credentialID = '\(credentialId)'"
+        var readTableStatement: OpaquePointer? = nil
+        var images : [Image] = []
+        if sqlite3_prepare_v2(db, query, -1, &readTableStatement, nil) == SQLITE_OK{
+            while sqlite3_step(readTableStatement) == SQLITE_ROW {
+                let imageId = Int(sqlite3_column_int(readTableStatement, 0))
+                let todoId = Int(sqlite3_column_int(readTableStatement, 1))
+                let categoryId = Int(sqlite3_column_int(readTableStatement, 2))
+                let credentialId = Int(sqlite3_column_int(readTableStatement, 3))
+                let imageName = String(describing: String(cString: sqlite3_column_text(readTableStatement, 4)))
+                images.append(Image(imageId: imageId, todoId: todoId, categoryId: categoryId, credentialId: credentialId, imageName: imageName))
+                
+                print("\(imageId), \(categoryId), \(todoId), \(credentialId), \(imageName)")
+            }
+           
+        }else{
+            print("SELECT statement could not be prepared")
+        }
+        sqlite3_finalize(readTableStatement)
+        return images
+    }
     
-//    func readImagesTable(credentialId: Int, categoryId: Int, todoId: Int) -> [Image]{
-//        let query = "SELECT * FROM images where todoID = '\(todoId)' AND categoryID = '\(categoryId)' AND credentialID = '\(credentialId)'"
-//        var readTableStatement: OpaquePointer? = nil
-//        var images : [Image] = []
-//        
-//    }
+    
+   
+    
+    
+    func insertImage(todoId: Int, categoryId: Int, credentialId: Int, imageName: String) ->Bool {
+        let images = readImagesTable(credentialId: credentialId, categoryId: categoryId, todoId: todoId)
+        for i in images{
+            if i.imageName == imageName{
+                return false
+            }
+        }
+        
+        
+        let query = "INSERT INTO images(todoID, categoryID, credentialID, imageName, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?);"
+        var insertStatement: OpaquePointer? = nil
+        if sqlite3_prepare_v2(db, query, -1, &insertStatement, nil) == SQLITE_OK{
+            sqlite3_bind_int(insertStatement, 1, Int32(todoId))
+            sqlite3_bind_int(insertStatement, 2, Int32(categoryId))
+            sqlite3_bind_int(insertStatement, 3, Int32(credentialId))
+            sqlite3_bind_text(insertStatement, 4, (imageName as NSString).utf8String, -1, nil)
+            sqlite3_bind_double(insertStatement, 5, Date().timeIntervalSinceReferenceDate)
+            sqlite3_bind_null(insertStatement, 6)
+            if sqlite3_step(insertStatement) == SQLITE_DONE{
+                print("successfully inserted row")
+            }else{
+                print("Could not insert row")
+                return false
+            }
+        }else{
+            print("INSERT statement could not be prepared")
+            return false
+        }
+        sqlite3_finalize(insertStatement)
+        return true
+    }
+    
+    
+    
+    
+    
+
+
+    
+    
 }
 

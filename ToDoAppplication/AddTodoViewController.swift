@@ -8,8 +8,7 @@
 import UIKit
 
 class AddTodoViewController: UIViewController {
-    
-    var credentialID: Int?
+
     
     var db = DBHelper()
     
@@ -19,13 +18,24 @@ class AddTodoViewController: UIViewController {
     
     var selectedCategoryId: Int?
     
+    var selectedCategory: String?
+    
     var imageArray: [UIImage] = []
+    
+    var oldImageArray:[UIImage] = []
+    
+    var editEnable: Bool = false
     
     var datePicker = UIDatePicker(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 200))
     
     let imagePicker = UIImagePickerController()
     
     var shouldSave = false
+   
+    
+    var oldTodo: Todo?
+    
+    var todoId : Int?
     
     lazy var categoryStackView: UIStackView = {
         let view = UIStackView()
@@ -39,7 +49,7 @@ class AddTodoViewController: UIViewController {
     lazy var selectCategoryTextfield: UITextField = {
         let textfield = UITextField()
         textfield.backgroundColor = .white
-        textfield.text = "Select"
+        textfield.placeholder = "Select"
         textfield.borderStyle = .roundedRect
         return textfield
     }()
@@ -132,7 +142,6 @@ class AddTodoViewController: UIViewController {
     
     lazy var dueDateStackView: UIStackView = {
         let view = UIStackView()
-//        view.addArrangedSubview(dueDateLabel)
         view.addArrangedSubview(dateTextField)
         view.axis = .horizontal
         view.spacing = 5
@@ -159,12 +168,47 @@ class AddTodoViewController: UIViewController {
         super.viewDidLoad()
        setupview()
         imagePicker.delegate = self
-        if let credentialID = credentialID{
+        if let credentialID = Universal.credentialID{
             arr = db.readCategoryTable(credentialID: credentialID)
         }
+        if !editEnable{
+            createPickerView()
+            dismissPickerView()
+            for a in arr {
+                if a.id == selectedCategoryId{
+                    selectCategoryTextfield.text = a.categoryName
+                    selectCategoryTextfield.isUserInteractionEnabled = true
+                }
+                
+            }
+
+            
+        }else{
+            todoId = oldTodo?.todoID
+            for a in arr {
+                if a.id == oldTodo?.categoryID{
+                    selectCategoryTextfield.text = a.categoryName
+                    selectCategoryTextfield.isUserInteractionEnabled = false
+                }
+                
+            }
+            todoTitle.text = oldTodo?.todoText
+            dateTextField.text = oldTodo?.dueDate
+            if let credentialId = Universal.credentialID, let categoryId = selectedCategoryId, let todoId = oldTodo?.todoID{
+              let images = db.readImagesTable(credentialId: credentialId, categoryId: categoryId, todoId: todoId)
+                oldImageArray = []
+                for i in images {
+                    if let image = readImageAtDoucumentDiectory(imageName: i.imageName){
+                        oldImageArray.append(image)
+                    }
+                    
+                }
+                imageArray = imageArray + oldImageArray
+                ImageCollectionView.reloadData()
+            }
+            
+        }
         
-        createPickerView()
-        dismissPickerView()
         createDatePicker()
         dismissDatePicker()
         
@@ -216,6 +260,7 @@ class AddTodoViewController: UIViewController {
     
     @objc func dateChanged(){
         dateTextField.text = Universal.converDateFormatter(datePicker.date)
+        print(dateTextField.text)
     }
     
     
@@ -223,7 +268,7 @@ class AddTodoViewController: UIViewController {
         shouldSave = true
         categoryErrorlabel.isHidden = true
         todoTitleErrorlabel.isHidden = true
-        if selectedCategoryId == nil{
+        if selectedCategoryId == nil && !editEnable{
             categoryErrorlabel.text = "This field should not be empty."
             categoryErrorlabel.isHidden = false
             shouldSave = false
@@ -235,12 +280,51 @@ class AddTodoViewController: UIViewController {
         }
         
         if shouldSave {
-            guard let categoryID = selectedCategoryId, let credentialID = credentialID else {return}
-            let hasSaved = db.insertTodo(categoryID: categoryID, credentialID: credentialID, todoName: todoTitle.text ?? "", isCompleted: 0, dueDate: dateTextField.text ?? "")
-            if hasSaved{
-                let alertController = UIAlertController(title: "Done", message: "Todo has save successfully!", preferredStyle: .alert)
-                alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                self.present(alertController, animated: true, completion: nil)
+            var hasSavedImages = true
+            var hasSavedTodo = true
+            guard let categoryID = selectedCategoryId, let credentialID = Universal.credentialID else {return}
+            if editEnable{
+                guard let todo = oldTodo else {
+                    return
+                }
+                hasSavedTodo = db.uptateTodo(todoId: todo.todoID, credetialId: todo.credentialID, categoryId: todo.categoryID, todoName: todoTitle.text ?? "", isComplete: todo.isCompleted, dueDate: dateTextField.text ?? "")
+            }else{
+                 hasSavedTodo = db.insertTodo(categoryID: categoryID, credentialID: credentialID, todoName: todoTitle.text ?? "", isCompleted: 0, dueDate: dateTextField.text ?? "")
+                let readtodo = db.readTodoTable(categoryID: categoryID, credentialID: credentialID)
+                
+                for r in readtodo{
+                    if todoTitle.text == r.todoText{
+                        todoId = r.todoID
+                    }
+                }
+            }
+            
+            
+            outer: for i in imageArray{
+                for j in oldImageArray{
+                    if i == j {
+                        continue outer
+                    }
+                }
+                let imageSaved: Bool = saveImageAtDocumentDirectory(image: i, imageName: "\(Date())")
+                if !imageSaved {
+                    hasSavedImages = false
+                    return
+                }
+            }
+            
+            
+            if hasSavedTodo{
+                if hasSavedImages{
+                    let alertController = UIAlertController(title: "Done", message: "Todo has save successfully!", preferredStyle: .alert)
+                    alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                    self.present(alertController, animated: true, completion: nil)
+                }else{
+                    let alertController = UIAlertController(title: "Error!", message: "error in saving images", preferredStyle: .alert)
+                    alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                    self.present(alertController, animated: true, completion: nil)
+                }
+                
             }else{
                 todoTitleErrorlabel.isHidden = false
                 todoTitleErrorlabel.text = "\(todoTitle.text ?? "" ) has already exist."
@@ -299,6 +383,43 @@ class AddTodoViewController: UIViewController {
                 self.present(alertController, animated: true)
         }
     }
+    
+    
+    
+    
+    func saveImageAtDocumentDirectory(image : UIImage, imageName: String) -> Bool{
+    let document = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+    let imageurl = document.appendingPathComponent(imageName, isDirectory: true)
+    if !FileManager.default.fileExists(atPath: imageurl.path){
+        do {
+            
+            try image.jpegData(compressionQuality: 1.0)?.write(to: imageurl)
+            if let id = todoId, let categoryId = selectedCategoryId, let  credentialId = Universal.credentialID{
+               return db.insertImage(todoId: id, categoryId: categoryId, credentialId: credentialId, imageName: imageName)
+            }
+            print("image added successfully")
+            
+        }catch{
+            print("error saving imge to document", error)
+            return false
+        }
+    }
+        return false
+}
+    
+    
+    func readImageAtDoucumentDiectory(imageName: String) -> UIImage? {
+        let nsDocumentDirectory = FileManager.SearchPathDirectory.documentDirectory
+        let nsUserDomainMask = FileManager.SearchPathDomainMask.userDomainMask
+        let paths = NSSearchPathForDirectoriesInDomains(nsDocumentDirectory, nsUserDomainMask, true)
+        if let dirPath = paths.first
+        {
+           let imageURL = URL(fileURLWithPath: dirPath).appendingPathComponent(imageName)
+           return UIImage(contentsOfFile: imageURL.path)
+           // Do whatever you want with the image
+        }
+        return nil
+    }
 
     /*
     // MARK: - Navigation
@@ -313,20 +434,7 @@ class AddTodoViewController: UIViewController {
     
     
     
-    func saveImageAtDocumentDirectory(image : UIImage, imageName: String){
-        let document = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        let imageurl = document.appendingPathComponent(imageName, isDirectory: true)
-        if !FileManager.default.fileExists(atPath: imageurl.path){
-            do {
-                
-                try image.jpegData(compressionQuality: 1.0)?.write(to: imageurl)
-                print("image added successfully")
-                
-            }catch{
-                print("error saving imge to document", error)
-            }
-        }
-    }
+    
 
 }
 

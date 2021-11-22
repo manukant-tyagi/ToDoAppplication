@@ -38,6 +38,7 @@ class ToDoViewController: UIViewController {
         view.addSubview(addTodoButton)
         setupView()
         tableView.dataSource = self
+        tableView.delegate = self
         
         navigationItem.title = "Todo"
         
@@ -56,7 +57,7 @@ class ToDoViewController: UIViewController {
     
     @objc fileprivate func todoAddButtonPressed(){
         let vc = AddTodoViewController()
-        vc.credentialID = Universal.credentialID
+        vc.selectedCategoryId = categoryID
         navigationController?.pushViewController(vc, animated: true)
     }
    
@@ -74,7 +75,7 @@ class ToDoViewController: UIViewController {
 
 }
 
-extension ToDoViewController: UITableViewDataSource{
+extension ToDoViewController: UITableViewDataSource, UITableViewDelegate{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         todos.count
     }
@@ -86,6 +87,21 @@ extension ToDoViewController: UITableViewDataSource{
         return cell
     }
     
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let action = UIContextualAction(style: .normal, title: "Edit") { (action, view, completionHandler) in
+            let vc = AddTodoViewController()
+            vc.editEnable = true
+            if let credentialId = Universal.credentialID, let categoryId = self.categoryID{
+                vc.oldTodo = Todo(todoID: self.todos[indexPath.row].todoID, todoText: self.todos[indexPath.row].todoText, isCompleted: self.todos[indexPath.row].isCompleted, credentialID: credentialId, categoryID: categoryId, dueDate: self.todos[indexPath.row].dueDate)
+            }
+            
+            vc.selectedCategoryId = self.categoryID
+            
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+        return UISwipeActionsConfiguration(actions: [action])
+    }
+
     
 }
 
