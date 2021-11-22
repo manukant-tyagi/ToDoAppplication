@@ -233,13 +233,12 @@ class RegisterViewController: UIViewController {
         if let firstName = firstNameTextField.text, let email = emailTextField.text, let password = passwordTextField.text, let lastName = lastNameTextField.text{
             let isInserted = dbHelper.insert(firstName: firstName, lastName: lastName,  email: email, password: password)
             if isInserted{
-                let alert = UIAlertController(title: "Register successfully", message: "press OK to Login", preferredStyle: .alert)
+                let alert = UIAlertController(title: "Register successfully", message: "", preferredStyle: .alert)
                 
-                let action = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-                let anotherAction = UIAlertAction(title: "OK", style: .default) { (action) in
+                let anotherAction = UIAlertAction(title: "Login", style: .default) { (action) in
                     self.navigationController?.popViewController(animated: true)
                 }
-                alert.addAction(action)
+                
                 alert.addAction(anotherAction)
                 
                 self.present(alert, animated: true, completion: nil)
