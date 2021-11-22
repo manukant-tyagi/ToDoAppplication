@@ -109,7 +109,7 @@ class AddTodoViewController: UIViewController {
         layout.itemSize = CGSize(width: 80, height: 80)
         print(self.view.frame)
         print(self.collectionContainerView.frame)
-        let view = UICollectionView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width - 20, height: 300) , collectionViewLayout: layout)
+        let view = UICollectionView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width - 20, height: 200) , collectionViewLayout: layout)
         view.layer.borderWidth = 1
         view.layer.cornerRadius = 2
         view.backgroundColor = .white
